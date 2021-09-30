@@ -1,0 +1,55 @@
+#include <unordered_set>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+bool cmp(pair<int, int>& pa, pair<int,int>& pb){
+    if(pa.first == pb.first){
+        return pa.second < pb.second;
+    }
+    return pa.first < pb.first;
+}
+
+vector<int> solution(vector<string> gems) {
+    vector<int> answer;
+        
+    // 투포인터 && 해시테이블
+    // vector<string> gems = {"ZZZ", "YYY", "NNNN", "YYY", "BBB"};
+    
+    
+    unordered_set<string> mp;
+    unordered_set<string> sizeChecker(gems.begin(), gems.end());
+    vector<pair<int, int>> interval; // 인터벌 길이, 시작 진열대 번호
+    
+    int left = 0, right = 0;
+    while(left < gems.size()){
+         if(mp.size() >= sizeChecker.size() || right == gems.size()){
+            if(mp.size() >= sizeChecker.size()){
+                interval.push_back({right - left, left+1});
+            }
+            left++;
+            right = left;
+            mp.clear();
+        }
+        else if(mp.size() < sizeChecker.size()){
+            mp.insert(gems[right]);
+            right++;
+        }
+    }
+    
+    sort(interval.begin(), interval.end(), cmp);
+    answer.push_back(interval.front().second);
+    answer.push_back(interval.front().first + interval.front().second - 1);
+    
+    return answer;
+}
+
+int main(){
+    vector<string> gems = {"ZZZ", "YYY", "NNNN", "YYY", "BBB"};
+    vector<int> answer;
+    answer = solution(gems);
+    cout << answer[0] << answer[1];
+}
